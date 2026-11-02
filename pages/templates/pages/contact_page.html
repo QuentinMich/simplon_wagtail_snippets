@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load static wagtailcore_tags %}
 {% block body_class %}template-contactpage{% endblock %}
 
 {% block content %}
@@ -13,6 +13,17 @@
 
     <p><strong>Téléphone :</strong> 05 56 00 00 00</p>
     <p><strong>Email :</strong> contact@coach-max.fr</p>
+</div>
+
+<div class="content">
+
+    <form action="{% pageurl page %}" method="POST">
+        {% csrf_token %}
+        {# jeton de securite obligatoire sur un formulaire POST, protege contre les attaques CSRF #}
+        {{ form.as_p }}
+        {# affiche automatiquement les 3 champs crees dans l'admin, un par ligne, sans qu'on les code nous-memes #}
+        <input type="submit" value="Envoyer">
+    </form>
 </div>
 
 {% endblock content %}
