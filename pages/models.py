@@ -34,9 +34,6 @@ class Cours(models.Model):
     def __str__(self):
         return self.nom
 
-
-
-
 class CoursPage(Page):
     def get_context(self, request):
         context = super().get_context(request)
@@ -61,3 +58,39 @@ class ContactPage(AbstractEmailForm):
         FieldPanel("from_address"),
         FieldPanel("subject")
     ]
+
+class CoachIndexPage(Page):
+    intro = RichTextField(blank=True)
+
+    content_panels = Page.content_panels + [
+        FieldPanel("intro")
+    ]
+
+    subpage_type = ['pages.CoachProfilPage']
+
+    def get_context(self, request):
+        context = super().get_context(request)
+        context["coachs"] = CoachProfilPage.objects.child_of(self).live()
+
+        return context
+
+class CoachProfilPage(Page):
+    specialite = models.CharField(max_length=300, blank=True)
+    nom = models.CharField(max_length=50)
+    photo = models.ForeignKey(
+        "wagtailimages.Image",
+        null = True,
+        blank = True,
+        on_delete= models.SET_NULL,
+        related_name="+"
+        )
+    bio = RichTextField(blank= True)
+
+    content_panels = Page.content_panels + [
+        FieldPanel("specialite"),
+        FieldPanel("nom"),
+        FieldPanel("photo"),
+        FieldPanel("bio"),
+    ]
+
+    parent_page_types = ["pages.CoachIndexPage"]
